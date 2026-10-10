@@ -73,12 +73,14 @@ class Organization(Base):
     created_at = Column(String(64), default=get_iso_now, nullable=False)
 
     users = relationship("User", back_populates="organization", cascade="all, delete-orphan")
+    products = relationship("Product", back_populates="organization", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="organization", cascade="all, delete-orphan")
     inventory_items = relationship("Inventory", back_populates="organization", cascade="all, delete-orphan")
     suppliers = relationship("Supplier", back_populates="organization", cascade="all, delete-orphan")
     agent_runs = relationship("AgentRun", back_populates="organization", cascade="all, delete-orphan")
     audit_events = relationship("AuditEvent", back_populates="organization", cascade="all, delete-orphan")
     merkle_blocks = relationship("MerkleBlock", back_populates="organization", cascade="all, delete-orphan")
+    compliance_documents = relationship("ComplianceDocument", back_populates="organization", cascade="all, delete-orphan")
 
 
 class User(Base):
@@ -109,6 +111,8 @@ class Product(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     unit = Column(String(32), default="units", nullable=False)
+
+    organization = relationship("Organization", back_populates="products")
 
 
 class Inventory(Base):
@@ -261,6 +265,8 @@ class ComplianceDocument(Base):
     effective_date = Column(String(64), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
 
+    organization = relationship("Organization", back_populates="compliance_documents")
+
 
 class ComplianceEvaluation(Base):
     __tablename__ = "compliance_evaluations"
@@ -335,15 +341,16 @@ def get_db() -> Generator[Session, None, None]:
 def init_db():
     """Create all tables and seed initial operational state."""
     Base.metadata.create_all(bind=engine)
-    with engine.connect() as conn:
-        try:
-            cursor = conn.execute(text("PRAGMA table_info(inventory)"))
-            cols = [row[1] for row in cursor.fetchall()]
-            if "on_order_quantity" not in cols and len(cols) > 0:
-                conn.execute(text("ALTER TABLE inventory ADD COLUMN on_order_quantity INTEGER NOT NULL DEFAULT 0"))
-                conn.commit()
-        except Exception as e:
-            print(f"[AETHERIS DB] Schema check notice: {e}")
+    if engine.dialect.name == "sqlite":
+        with engine.connect() as conn:
+            try:
+                cursor = conn.execute(text("PRAGMA table_info(inventory)"))
+                cols = [row[1] for row in cursor.fetchall()]
+                if "on_order_quantity" not in cols and len(cols) > 0:
+                    conn.execute(text("ALTER TABLE inventory ADD COLUMN on_order_quantity INTEGER NOT NULL DEFAULT 0"))
+                    conn.commit()
+            except Exception as e:
+                print(f"[AETHERIS DB] Schema check notice: {e}")
     with SessionLocal() as db:
         seed_database(db)
 
@@ -364,6 +371,7 @@ def seed_database(db: Session):
         created_at=get_iso_now()
     )
     db.add(org)
+    db.flush()  # Persist organization first so all foreign key constraints are satisfied
 
     # 2. Seed Users with real Ed25519 keypairs and bcrypt password hashes
     default_pw_hash = bcrypt.hashpw(b"Aetheris2026!", bcrypt.gensalt()).decode("utf-8")
@@ -404,6 +412,7 @@ def seed_database(db: Session):
         unit="units"
     )
     db.add(product)
+    db.flush()  # Persist users and products
 
     # 4. Seed Inventory: 300 units on hand (Shortage Scenario: Order requires 500 units)
     inventory = Inventory(
@@ -488,6 +497,7 @@ def seed_database(db: Session):
             is_active=True
         )
         db.add(sup)
+    db.flush()  # Persist inventory, order, and suppliers
 
     # 7. Seed Approved Compliance Documents
     compliance_docs = [
@@ -559,6 +569,7 @@ def seed_database(db: Session):
         created_at=now
     )
     db.add(audit_event)
+    db.flush()  # Persist compliance docs and genesis audit event
 
     # 9. Commit transaction atomically
     db.commit()

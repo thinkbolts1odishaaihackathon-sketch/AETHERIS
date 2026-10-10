@@ -20,6 +20,11 @@ frontend/.env
 frontend/.env.local
 backend/.env
 
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
 # Python artifacts
 __pycache__/
 **/__pycache__/
