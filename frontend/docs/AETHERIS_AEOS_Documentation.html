@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHERIS AEOS - Technical & Operational Enterprise Manual (v2.6.4)</title>
+  <style>
+    /* -------------------------------------------------------------
+       AETHERIS AEOS Enterprise Documentation Design System
+       Optimized for Screen Viewing and High-Fidelity PDF Print
+       ------------------------------------------------------------- */
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #2563eb;
+      --accent-cyan: #0891b2;
+      --accent-purple: #7c3aed;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg: #ffffff;
+      --bg-alt: #f8fafc;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Print & Page Margins */
+    @page {
+      size: A4 portrait;
+      margin: 18mm 16mm 18mm 16mm;
+      @bottom-right {
+        content: "Page " counter(page);
+        font-size: 9pt;
+        color: #94a3b8;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .avoid-break {
+        page-break-inside: avoid;
+      }
+      a {
+        text-decoration: none;
+        color: #000;
+      }
+      .cover-page {
+        height: 100vh;
+        page-break-after: always;
+      }
+      pre, code {
+        font-size: 8.5pt !important;
+      }
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 30px 24px;
+    }
+
+    /* Top bar for Web Viewer */
+    .web-viewer-bar {
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .web-viewer-bar h1 {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #93c5fd;
+    }
+    .print-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .print-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      background: linear-gradient(135deg, #090d16 0%, #0f172a 60%, #1e1b4b 100%);
+      color: #fff;
+      padding: 80px 48px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 800px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .cover-page::before {
+      content: "";
+      position: absolute;
+      top: -150px;
+      right: -150px;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(37,99,235,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      color: #93c5fd;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(to right, #ffffff, #93c5fd, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cover-subtitle {
+      font-size: 20px;
+      color: #94a3b8;
+      font-weight: 400;
+      max-width: 720px;
+      margin-bottom: 36px;
+      line-height: 1.5;
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 30px;
+      margin-top: auto;
+    }
+    .meta-item .meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .meta-item .meta-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    /* Headings & Structure */
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 40px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .sec-num {
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-light);
+      margin: 24px 0 10px 0;
+    }
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin: 16px 0 8px 0;
+    }
+    p {
+      margin-bottom: 12px;
+      color: #334155;
+    }
+    ul, ol {
+      margin: 8px 0 16px 24px;
+      color: #334155;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* Table of Contents */
+    .toc-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin: 30px 0 40px 0;
+    }
+    .toc-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 30px;
+    }
+    .toc-link {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted var(--border);
+      padding-bottom: 4px;
+      transition: color 0.15s;
+    }
+    .toc-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    .toc-num {
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-right: 6px;
+    }
+
+    /* Callouts & Alert Boxes */
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: #eff6ff;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 18px 0;
+      font-size: 13px;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .callout.warning {
+      border-left-color: var(--warning);
+      background: #fffbeb;
+    }
+    .callout.warning .callout-title {
+      color: #92400e;
+    }
+    .callout.danger {
+      border-left-color: var(--danger);
+      background: #fef2f2;
+    }
+    .callout.danger .callout-title {
+      color: #991b1b;
+    }
+    .callout.success {
+      border-left-color: var(--success);
+      background: #ecfdf5;
+    }
+    .callout.success .callout-title {
+      color: #065f46;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px 0;
+      font-size: 12.5px;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: #f1f5f9;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border-dark);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td {
+      background-color: #fafbfc;
+    }
+    tr:hover td {
+      background-color: #f1f5f9;
+    }
+
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11.5px;
+      line-height: 1.5;
+      margin: 12px 0 18px 0;
+      border: 1px solid #1e293b;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Badges & Tags */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+
+    /* Architecture Diagram (ASCII Box) */
+    .diagram-box {
+      background: #090d16;
+      color: #38bdf8;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.35;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 16px 0 24px 0;
+    }
+
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 18px 0 24px 0;
+    }
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .feature-card h4 {
+      margin-top: 0;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Method Pills */
+    .method {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+    }
+    .method-get { background: #dcfce7; color: #15803d; }
+    .method-post { background: #dbeafe; color: #1d4ed8; }
+    .method-put { background: #fef3c7; color: #b45309; }
+    .method-delete { background: #fee2e2; color: #b91c1c; }
+
+    /* Footer */
+    .doc-footer {
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+      padding-top: 20px;
+      color: var(--text-muted);
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Web Navigation Header (Hidden when printed to PDF) -->
+  <div class="web-viewer-bar no-print">
+    <h1>AETHERIS AEOS // Comprehensive Enterprise Manual (v2.6.4)</h1>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+
+  <div class="container">
+
+    <!-- =========================================================
+         COVER PAGE
+         ========================================================= -->
+    <div class="cover-page">
+      <div>
+        <span class="cover-badge">AETHERIS TECHNICAL PUBLICATION • SPEC-2026-AEOS</span>
+        <h1 class="cover-title">AETHERIS AEOS</h1>
+        <p style="font-size: 22px; font-weight: 600; color: #38bdf8; margin-bottom: 12px; letter-spacing: -0.01em;">
+          Autonomous Enterprise Operating System
+        </p>
+        <p class="cover-subtitle">
+          Complete Architectural Specification, Multi-Agent Swarm Dynamics, Cryptographic Ledger Verification, Statutory Regulatory Compliance, and Operational Implementation Manual.
+        </p>
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <span class="badge badge-blue">Version 2.6.4</span>
+          <span class="badge badge-green">Production Authoritative</span>
+          <span class="badge badge-purple">FastAPI + React 19 Swarm</span>
+          <span class="badge badge-gray">Ed25519 & RFC 8785 Audited</span>
+        </div>
+      </div>
+
+      <div class="cover-meta">
+        <div class="meta-item">
+          <div class="meta-label">Author / Organization</div>
+          <div class="meta-val">AETHERIS Systems Core Group</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Primary Stack</div>
+          <div class="meta-val">FastAPI :3001 // Vite :5173</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Regulatory Scope</div>
+          <div class="meta-val">EAR99, EU CBAM, German LkSG</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Security Protocol</div>
+          <div class="meta-val">BFT Lattice, Ed25519 Merkle</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TABLE OF CONTENTS
+         ========================================================= -->
+    <div class="toc-card avoid-break">
+      <div class="toc-title">Table of Contents</div>
+      <div class="toc-grid">
+        <a class="toc-link" href="#sec-1"><span class="toc-num">01</span> Executive Summary & Core Paradigm</a>
+        <a class="toc-link" href="#sec-2"><span class="toc-num">02</span> End-to-End System Architecture</a>
+        <a class="toc-link" href="#sec-3"><span class="toc-num">03</span> Full Technology Stack & Dependencies</a>
+        <a class="toc-link" href="#sec-4"><span class="toc-num">04</span> Frontend Architecture & Views Catalog</a>
+        <a class="toc-link" href="#sec-5"><span class="toc-num">05</span> UI Components & Interactive Shell</a>
+        <a class="toc-link" href="#sec-6"><span class="toc-num">06</span> Multi-Agent Swarm Orchestration Engine</a>
+        <a class="toc-link" href="#sec-7"><span class="toc-num">07</span> Cryptographic Engine & Immutable Ledger</a>
+        <a class="toc-link" href="#sec-8"><span class="toc-num">08</span> Relational Database Schema (14 Models)</a>
+        <a class="toc-link" href="#sec-9"><span class="toc-num">09</span> Authoritative REST API Reference</a>
+        <a class="toc-link" href="#sec-10"><span class="toc-num">10</span> Enterprise Security, RBAC & Governance</a>
+        <a class="toc-link" href="#sec-11"><span class="toc-num">11</span> Statutory Compliance Frameworks</a>
+        <a class="toc-link" href="#sec-12"><span class="toc-num">12</span> Benchmark Operational Walkthrough</a>
+        <a class="toc-link" href="#sec-13"><span class="toc-num">13</span> Mathematical Formulations & Resilience</a>
+        <a class="toc-link" href="#sec-14"><span class="toc-num">14</span> Developer Handbook & Deployment</a>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         SECTION 1: EXECUTIVE SUMMARY
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-1"><span class="sec-num">01</span> Executive Summary & Core Paradigm</h2>
+
+    <p>
+      <strong>AETHERIS AEOS</strong> (Autonomous Enterprise Operating System) is a mission-critical, AI-orchestrated ERP and supply chain governance platform designed to eliminate the multi-billion-dollar friction inherent in legacy enterprise software (SAP, Oracle NetSuite, Microsoft Dynamics). Conventional enterprise resource planning relies on siloed human approval loops, asynchronous batch processing, manual document inspection, and disconnected spreadsheets—leading to supply chain disruptions, severe late delivery SLA penalties, regulatory embargo violations, and untracked carbon border tariffs.
+    </p>
+
+    <div class="callout">
+      <div class="callout-title">The Fundamental Paradigm Shift</div>
+      AETHERIS replaces passive databases with an active, autonomous multi-agent swarm. Rather than waiting for human procurement officers to detect an inventory deficit hours or days after an order arrives, AEOS continuously monitors order streams, detects deficits in milliseconds, runs parallel market arbitrage across global suppliers, checks international export and environmental laws, enforces cryptographic separation of duties, and generates verifiable, tamper-evident cryptographic proofs.
+    </div>
+
+    <h3>Key Value Propositions & Architectural Pillars</h3>
+    <ul>
+      <li><strong>Autonomous Swarm Intelligence:</strong> Five specialized, deterministic agents collaborate over an in-memory message bus using Byzantine Fault Tolerant (BFT) weighted consensus.</li>
+      <li><strong>Deterministic Mathematical Verification:</strong> Agent decisions are grounded in immutable operational arithmetic (inventory shortages, freight lead times, SLA penalty vs. expediting cost arbitrage).</li>
+      <li><strong>Statutory Multi-Jurisdiction Compliance:</strong> Real-time regulatory gating against US Export Administration Regulations (EAR99), EU Carbon Border Adjustment Mechanism (CBAM), and the German Supply Chain Due Diligence Act (LkSG) with explicit legal citations.</li>
+      <li><strong>Cryptographic Immutability:</strong> All operational decisions and state changes are recorded in an RFC 8785 canonical format, chained via SHA-256 hashes, organized into binary Merkle trees with odd-leaf duplication, and digitally sealed with Ed25519 signatures.</li>
+      <li><strong>Human-in-the-Loop Financial Gating:</strong> Rigorous separation of duties enforcing a $5,000 auto-execution ceiling. Orders exceeding $5,000 require dual-control approval by an authorized role (Director or Executive), rejecting unauthorized roles with HTTP 403.</li>
+    </ul>
+
+    <!-- =========================================================
+         SECTION 2: END-TO-END SYSTEM ARCHITECTURE
+         ========================================================= -->
+    <h2 id="sec-2"><span class="sec-num">02</span> End-to-End System Architecture</h2>
+
+    <p>
+      The AETHERIS AEOS platform is architected as a decoupled, high-performance client-server topology. The backend is powered by a high-throughput <strong>FastAPI (Python 3.11+)</strong> asynchronous engine operating strictly on port <code>3001</code>. The frontend is built with <strong>React 19, TypeScript, and Vite</strong> running on port <code>5173</code> with reverse-proxy routing.
+    </p>
+
+    <div class="diagram-box">
++---------------------------------------------------------------------------------------------------+
+|                                  AETHERIS CLIENT SURFACE (PORT 5173)                              |
+|   React 19 + TypeScript 5.8 + Vite + Tailwind CSS + Lucide Icons + Google GenAI SDK               |
+|                                                                                                   |
+|  [Problem Explorer]  [Swarm Visualizer]  [Mission Control]  [Compliance Radar]  [Operations Engine] |
++---------------------------------------------------------------------------------------------------+
+                                                  |
+                          Vite Proxy: /api/* ---->| HTTP/JSON (REST)
+                                                  v
++---------------------------------------------------------------------------------------------------+
+|                                  FASTAPI AUTHORITATIVE BACKEND (PORT 3001)                        |
+|                                                                                                   |
+|  +--------------------+  +--------------------+  +--------------------+  +--------------------+   |
+|  |   Auth & RBAC      |  | Swarm Orchestration|  | Operations Service |  | Regulatory Sentinel|   |
+|  |   (/api/auth/*)    |  |  (/api/orchestr/*) |  | (Shortage/PO/GRN)  |  | (EAR99/CBAM/LkSG)  |   |
+|  +--------------------+  +--------------------+  +--------------------+  +--------------------+   |
+|                                      |                                                            |
+|  +---------------------------------------------------------------------------------------------+  |
+|  |                     CRYPTOGRAPHIC ENGINE (RFC 8785, SHA-256, Ed25519, Merkle)               |  |
+|  +---------------------------------------------------------------------------------------------+  |
+|                                      |                                                            |
+|  +---------------------------------------------------------------------------------------------+  |
+|  |                     SQLAlchemy ORM (SQLite / PostgreSQL) - 14 Relational Models             |  |
+|  +---------------------------------------------------------------------------------------------+  |
++---------------------------------------------------------------------------------------------------+
+    </div>
+
+    <h3>Architectural Clarification & Legacy Retirement</h3>
+    <div class="callout warning">
+      <div class="callout-title">Historical Node.js / Express Server Retirement</div>
+      Earlier iterations of the codebase contained an experimental Node.js/Express server in the <code>server/</code> directory. As established in the system audit, this server is <strong>retired and non-authoritative</strong>. The production runtime is strictly <strong>FastAPI on port 3001</strong>. Vite's proxy configuration in <code>vite.config.ts</code> points directly to <code>http://localhost:3001</code>.
+    </div>
+
+    <!-- =========================================================
+         SECTION 3: FULL TECHNOLOGY STACK
+         ========================================================= -->
+    <h2 id="sec-3"><span class="sec-num">03</span> Full Technology Stack & Dependencies</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Version</th>
+          <th>Role & Purpose in AEOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend Core</strong></td>
+          <td>React</td>
+          <td>19.0.0</td>
+          <td>Concurrent rendering, state management, transitions</td>
+        </tr>
+        <tr>
+          <td><strong>Language</strong></td>
+          <td>TypeScript</td>
+          <td>5.8.2</td>
+          <td>Strict typing for models, API contracts, agent state</td>
+        </tr>
+        <tr>
+          <td><strong>Bundler</strong></td>
+          <td>Vite</td>
+          <td>6.2.0</td>
+          <td>HMR dev server, optimized production bundling, proxy</td>
+        </tr>
+        <tr>
+          <td><strong>Iconography</strong></td>
+          <td>Lucide React</td>
+          <td>^1.16.0</td>
+          <td>Vector iconography for all cockpit controls and radars</td>
+        </tr>
+        <tr>
+          <td><strong>AI SDK</strong></td>
+          <td>@google/genai</td>
+          <td>^0.1.1</td>
+          <td>Client-side Gemini 2.5 Flash / Pro model integration</td>
+        </tr>
+        <tr>
+          <td><strong>Client Crypto</strong></td>
+          <td>bcryptjs</td>
+          <td>^3.0.2</td>
+          <td>Client-side password hashing and salt verification</td>
+        </tr>
+        <tr>
+          <td><strong>Backend Core</strong></td>
+          <td>FastAPI</td>
+          <td>0.115+</td>
+          <td>High-performance async ASGI REST API framework</td>
+        </tr>
+        <tr>
+          <td><strong>ASGI Server</strong></td>
+          <td>Uvicorn</td>
+          <td>0.30+</td>
+          <td>Production async HTTP server on port 3001</td>
+        </tr>
+        <tr>
+          <td><strong>ORM Layer</strong></td>
+          <td>SQLAlchemy</td>
+          <td>2.0+</td>
+          <td>Typed relational ORM mapping 14 database models</td>
+        </tr>
+        <tr>
+          <td><strong>Data Validation</strong></td>
+          <td>Pydantic</td>
+          <td>2.0+</td>
+          <td>Strict request/response schema parsing and validation</td>
+        </tr>
+        <tr>
+          <td><strong>Crypto Core</strong></td>
+          <td>Python <code>cryptography</code></td>
+          <td>42.0+</td>
+          <td>Ed25519 asymmetric signing, SHA-256 Merkle root hashing</td>
+        </tr>
+        <tr>
+          <td><strong>Database Engine</strong></td>
+          <td>SQLite / PostgreSQL</td>
+          <td>3.x / 16</td>
+          <td>Persistent transaction, audit event, and block store</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- =========================================================
+         SECTION 4: FRONTEND ARCHITECTURE & VIEWS
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-4"><span class="sec-num">04</span> Frontend Architecture & Views Catalog</h2>
+
+    <p>
+      The AETHERIS AEOS user interface is built as a single-page reactive cockpit with six primary views, controlled dynamically through <code>App.tsx</code>. Users navigate seamlessly between tactical operational controls, strategic swarm telemetry, compliance radars, and executive whitepapers.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>1. Problem Statement Explorer</h4>
+        <p>
+          Interactive breakdown of legacy enterprise ERP failure modes. Highlights real-world friction: SAP/Oracle manual handoffs, procurement delays, lack of carbon border accounting, and opaque supply chain vulnerabilities. Includes interactive cost-of-delay calculators.
+        </p>
+        <span class="badge badge-gray">Route: problem</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>2. Swarm Visualizer</h4>
+        <p>
+          Real-time force-directed or lattice graph showing all five active swarm agents. Visualizes inter-agent message propagation, current task assignment, memory utilization, voting rounds, and consensus state with micro-animations.
+        </p>
+        <span class="badge badge-blue">Route: swarm</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>3. Mission Control Cockpit</h4>
+        <p>
+          The central operational telemetry center. Displays active run IDs, timeline execution bars, live system logs, agent thought streams, BFT consensus voting matrices, and real-time Merkle block sealing telemetry.
+        </p>
+        <span class="badge badge-purple">Route: mission</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>4. Compliance Radar</h4>
+        <p>
+          Multi-jurisdictional compliance telemetry. Evaluates every supplier and part against EAR99 export restrictions, EU CBAM carbon border tariffs, and German LkSG human rights supply chain mandates. Features live statutory legal citation lookups.
+        </p>
+        <span class="badge badge-green">Route: compliance</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>5. Operations Conductor</h4>
+        <p>
+          Procurement and supply chain execution desk. Displays real-time stock levels, active deficits, supplier bidding matrices, purchase order lifecycles, goods receipt confirmations (GRN), and dual-control approval queues.
+        </p>
+        <span class="badge badge-amber">Route: operations</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>6. Competitive Alpha & Whitepaper</h4>
+        <p>
+          Empirical comparison benchmarks proving AETHERIS AEOS superiority over legacy platforms (SAP S/4HANA, Palantir Foundry). Includes mathematical proofs, SLA arbitrage equations, and strategic whitepaper downloads.
+        </p>
+        <span class="badge badge-blue">Route: alpha / whitepaper</span>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         SECTION 5: UI COMPONENTS & SHELL
+         ========================================================= -->
+    <h2 id="sec-5"><span class="sec-num">05</span> UI Components & Interactive Shell</h2>
+
+    <p>
+      The user interface incorporates 18 production-grade React components designed for zero-latency operator feedback, military-grade aesthetics, and comprehensive accessibility:
+    </p>
+
+    <ul>
+      <li><strong>Sidebar (<code>Sidebar.tsx</code>):</strong> Primary navigation bar supporting collapsed and expanded states, badge counters for pending approvals, and active route indicators.</li>
+      <li><strong>TopBar (<code>TopBar.tsx</code>):</strong> Global status banner displaying system health (FastAPI connection indicator), active organization, session role badge, theme switcher, and command palette prompt.</li>
+      <li><strong>LoginPage & AuthModal (<code>LoginPage.tsx</code>, <code>AuthModal.tsx</code>):</strong> Enterprise authentication gateways with pre-configured demo account pills, instant role switching, and session persistence.</li>
+      <li><strong>UserProfileMenu (<code>UserProfileMenu.tsx</code>):</strong> Popover menu showing current user credentials, organization UUID, role permissions, and active session termination.</li>
+      <li><strong>CommandPalette (<code>CommandPalette.tsx</code>):</strong> Global keyboard-driven omnibox (triggered by <code>Ctrl+K</code> or <code>⌘K</code>) allowing instant jumping between views, triggering recovery runs, and searching parts.</li>
+      <li><strong>ApiKeyModal (<code>ApiKeyModal.tsx</code>):</strong> Secure client-side credential manager for Google Gemini API keys, allowing users to inject their own API keys stored strictly in <code>localStorage</code>.</li>
+      <li><strong>MasterPromptModal (<code>MasterPromptModal.tsx</code>):</strong> System prompt debugger and policy override inspector, displaying the foundational LLM system prompts powering the swarm agents.</li>
+      <li><strong>AuditProofModal (<code>AuditProofModal.tsx</code>):</strong> High-fidelity cryptographic verification modal displaying Merkle tree inclusion proofs, sibling hash trails, and Ed25519 public key signatures.</li>
+      <li><strong>ConsensusVotingMatrix (<code>ConsensusVotingMatrix.tsx</code>):</strong> Interactive BFT consensus table displaying individual agent votes, confidence weights, rationale, and quorum calculations.</li>
+      <li><strong>Dual Theme Engine:</strong> Supports <em>Linear Dark Obsidian</em> (default high-contrast dark theme) and <em>Apple Light Studio</em> (clean light theme) with real-time CSS variable interpolation and local storage persistence.</li>
+    </ul>
+
+    <!-- =========================================================
+         SECTION 6: MULTI-AGENT SWARM ORCHESTRATION ENGINE
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-6"><span class="sec-num">06</span> Multi-Agent Swarm Orchestration Engine</h2>
+
+    <p>
+      At the core of AETHERIS AEOS is a deterministic, five-agent swarm engine implemented in <code>server_py/services/orchestrator.py</code>. The agents operate in strict hierarchical and parallel layers to resolve complex enterprise disruptions:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Agent Name</th>
+          <th>Internal ID</th>
+          <th>Deterministic Operational Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>L0</strong></td>
+          <td><strong>Apex Orchestrator</strong></td>
+          <td><code>apex-orchestrator</code></td>
+          <td>
+            Central planner and mission coordinator. Parses inbound orders, extracts required bills of materials (BOM), detects inventory shortages, breaks missions into discrete agent tasks, and synthesizes final BFT consensus.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>L1</strong></td>
+          <td><strong>Operations Conductor</strong></td>
+          <td><code>operations-conductor</code></td>
+          <td>
+            Procurement arithmetic specialist. Computes inventory deficits, queries qualified suppliers, scores bids on unit cost, shipping lead times, and reliability, selects optimal suppliers, and prepares purchase orders.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>L1</strong></td>
+          <td><strong>Regulatory Sentinel</strong></td>
+          <td><code>regulatory-sentinel</code></td>
+          <td>
+            Statutory legal and environmental auditor. Verifies transactions against US EAR99 regulations, calculates EU CBAM embedded emissions liabilities, checks German LkSG human rights records, and verifies supplier ISO certifications.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>L1</strong></td>
+          <td><strong>Market Alpha Strategist</strong></td>
+          <td><code>market-alpha-strategist</code></td>
+          <td>
+            Economic arbitrage analyst. Models late-delivery SLA penalties against expediting freight premiums. Determines whether expedited air freight ($10,800) is justified to prevent contractual SLA defaults ($25,000+).
+          </td>
+        </tr>
+        <tr>
+          <td><strong>L2</strong></td>
+          <td><strong>Cryptographic Auditor</strong></td>
+          <td><code>cryptographic-auditor</code></td>
+          <td>
+            Immutability guarantor. Collects execution traces and decision payloads, transforms them to RFC 8785 canonical JSON, calculates SHA-256 event chains, builds binary Merkle trees, and signs blocks with Ed25519 keys.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Swarm Execution Lifecycle & BFT Consensus</h3>
+    <ol>
+      <li><strong>Trigger & Ingestion:</strong> Inbound disruption signal received (e.g. Airbus Defense Order ORD-2026-500).</li>
+      <li><strong>Mission Decomposition:</strong> Apex Orchestrator constructs an execution plan with dependency graphs in <code>agent_tasks</code>.</li>
+      <li><strong>Parallel Evaluation:</strong> Operations Conductor, Regulatory Sentinel, and Market Alpha Strategist run parallel evaluations.</li>
+      <li><strong>BFT Consensus Voting:</strong> Each agent casts a weighted vote (Approve / Reject / Conditional) with a confidence score and mathematical rationale. A 67% supermajority quorum is required to proceed.</li>
+      <li><strong>Governance Gating:</strong> If total purchase order value exceeds $5,000, execution halts and an <code>approval_requests</code> record is generated. Execution resumes only upon cryptographic approval by an authorized role.</li>
+      <li><strong>Merkle Sealing:</strong> Cryptographic Auditor seals all events into an immutable Merkle block with an Ed25519 signature.</li>
+    </ol>
+
+    <!-- =========================================================
+         SECTION 7: CRYPTOGRAPHIC ENGINE & IMMUTABLE LEDGER
+         ========================================================= -->
+    <h2 id="sec-7"><span class="sec-num">07</span> Cryptographic Engine & Immutable Ledger</h2>
+
+    <p>
+      Implemented in <code>server_py/crypto_engine.py</code>, the cryptographic subsystem guarantees absolute tamper-evidence, non-repudiation, and independent auditability without relying on external blockchain overhead:
+    </p>
+
+    <h3>1. Canonical JSON Serialization (RFC 8785)</h3>
+    <p>
+      To prevent hash mismatches caused by whitespace, key reordering, or floating point formatting, all payloads pass through a strict canonical serializer:
+    </p>
+    <pre><code>def canonical_json(data: Any) -> bytes:
+    """Serializes data using RFC 8785 rules: sorted keys, no whitespace, UTF-8."""
+    return json.dumps(data, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')</code></pre>
+
+    <h3>2. Cryptographic Hash Chaining</h3>
+    <p>
+      Every audit event in AEOS is linked to its immediate predecessor via SHA-256 chaining. If any row in the database is modified or deleted by a malicious database administrator, the chain breaks instantly:
+    </p>
+    <pre><code>current_event_hash = SHA256(canonical_json(event_payload) + previous_event_hash.encode('utf-8'))</code></pre>
+
+    <h3>3. Binary Merkle Tree Construction (Odd-Leaf Duplication)</h3>
+    <p>
+      Audit events are aggregated into Merkle blocks. The binary tree hashes sibling pairs from leaf nodes up to the root. If a level has an odd number of nodes, the final node is duplicated to maintain a balanced binary tree:
+    </p>
+    <div class="diagram-box">
+                       [ Merkle Root (Block 1) ]
+                                /        \
+                    [ Hash AB ]            [ Hash CD ]
+                     /       \              /        \
+               [ Hash A ]  [ Hash B ]  [ Hash C ]  [ Hash D ]
+                  |           |           |           |
+               Event 1     Event 2     Event 3     Event 4
+    </div>
+
+    <h3>4. Ed25519 Asymmetric Digital Signatures</h3>
+    <p>
+      When a block is closed, the root hash is signed using an Ed25519 private key generated via the Python <code>cryptography</code> library. The public key is embedded directly into the block header. Third-party auditors can independently verify block authenticity using only the public key.
+    </p>
+
+    <h3>5. Proof of Inclusion Generation & Verification</h3>
+    <p>
+      Any individual transaction can be proven to exist inside a sealed block without revealing the other transactions. The engine generates a minimal sibling hash path (left/right positions) which the client hashes upward to recompute and verify the root.
+    </p>
+
+    <!-- =========================================================
+         SECTION 8: RELATIONAL DATABASE SCHEMA
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-8"><span class="sec-num">08</span> Relational Database Schema (14 Models)</h2>
+
+    <p>
+      The data persistence layer is governed by SQLAlchemy ORM in <code>server_py/database.py</code>, comprising 14 highly structured tables with foreign key integrity and audit immutability:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Table Name</th>
+          <th>Primary Key</th>
+          <th>Key Fields & Types</th>
+          <th>Description & Relational Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>organizations</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>name</code>, <code>code</code>, <code>created_at</code></td>
+          <td>Tenant organization master record (e.g. AETHERIS Enterprise).</td>
+        </tr>
+        <tr>
+          <td><code>users</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>email</code>, <code>hashed_password</code>, <code>role</code>, <code>org_id</code></td>
+          <td>System users with RBAC roles (executive, director, officer, analyst).</td>
+        </tr>
+        <tr>
+          <td><code>products</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>sku</code>, <code>name</code>, <code>unit</code>, <code>specs</code>, <code>eccn</code></td>
+          <td>Catalog items with export classifications (e.g. TF-700 Titanium Flange).</td>
+        </tr>
+        <tr>
+          <td><code>inventory</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>product_id</code>, <code>warehouse_code</code>, <code>on_hand</code>, <code>reserved</code></td>
+          <td>Real-time warehouse stock tracking across facilities.</td>
+        </tr>
+        <tr>
+          <td><code>orders</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>customer_name</code>, <code>product_id</code>, <code>quantity</code>, <code>status</code></td>
+          <td>Inbound customer sales orders requiring fulfillment.</td>
+        </tr>
+        <tr>
+          <td><code>suppliers</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>name</code>, <code>country</code>, <code>lead_time_days</code>, <code>rating</code></td>
+          <td>Global supplier master records with geographic & reliability metrics.</td>
+        </tr>
+        <tr>
+          <td><code>purchase_orders</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>po_number</code>, <code>supplier_id</code>, <code>quantity</code>, <code>total_amount</code></td>
+          <td>Issued procurement orders with line items and financial totals.</td>
+        </tr>
+        <tr>
+          <td><code>agent_runs</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>run_number</code>, <code>status</code>, <code>order_id</code>, <code>summary</code></td>
+          <td>Top-level execution runs created by the Apex Orchestrator.</td>
+        </tr>
+        <tr>
+          <td><code>agent_tasks</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>run_id</code>, <code>agent_name</code>, <code>status</code>, <code>payload</code></td>
+          <td>Sub-tasks assigned to individual agents with input/output payloads.</td>
+        </tr>
+        <tr>
+          <td><code>approval_requests</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>run_id</code>, <code>po_id</code>, <code>status</code>, <code>threshold_amount</code></td>
+          <td>Human-in-the-loop financial governance approvals ($5k+ ceiling).</td>
+        </tr>
+        <tr>
+          <td><code>compliance_documents</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>supplier_id</code>, <code>doc_type</code>, <code>issuing_authority</code></td>
+          <td>Certificates of origin, CBAM carbon declarations, ISO 9001/14001 docs.</td>
+        </tr>
+        <tr>
+          <td><code>compliance_evaluations</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>run_id</code>, <code>framework</code>, <code>passed</code>, <code>citations</code></td>
+          <td>Detailed compliance audit reports with statutory legal citations.</td>
+        </tr>
+        <tr>
+          <td><code>audit_events</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>event_type</code>, <code>actor</code>, <code>payload_hash</code>, <code>prev_hash</code></td>
+          <td>SHA-256 chained immutable ledger of every system mutation.</td>
+        </tr>
+        <tr>
+          <td><code>merkle_blocks</code></td>
+          <td><code>id</code> (String PK)</td>
+          <td><code>block_number</code>, <code>merkle_root</code>, <code>signature</code>, <code>events_count</code></td>
+          <td>Sealed cryptographic blocks containing Merkle trees & Ed25519 signatures.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- =========================================================
+         SECTION 9: AUTHORITATIVE REST API REFERENCE
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-9"><span class="sec-num">09</span> Authoritative REST API Reference</h2>
+
+    <p>
+      The FastAPI server on port 3001 provides a fully typed, high-performance RESTful API. The table below details all core endpoints, HTTP methods, authorization requirements, and response contracts:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Method & Path</th>
+          <th>Auth & Role</th>
+          <th>Request Payload</th>
+          <th>Description & Response Body</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method method-post">POST</span> <code>/api/auth/login</code></td>
+          <td>Public</td>
+          <td><code>{ email, password }</code></td>
+          <td>Authenticates user, verifies bcrypt hash, returns session token & user profile.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span> <code>/api/auth/switch-role</code></td>
+          <td>Authenticated</td>
+          <td><code>{ role }</code></td>
+          <td>Allows authorized tenant switching between demo roles for verification testing.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/auth/session</code></td>
+          <td>Authenticated</td>
+          <td>None</td>
+          <td>Returns current user session, active organization, and granted RBAC permissions.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span> <code>/api/orchestration/runs/start-recovery</code></td>
+          <td>Authenticated</td>
+          <td><code>{ order_id, notes }</code></td>
+          <td>Triggers 5-agent swarm disruption recovery pipeline for a specified order.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/runs</code></td>
+          <td>Authenticated</td>
+          <td>Query: <code>limit, offset</code></td>
+          <td>Lists all historical agent orchestration runs, completion statuses, and summaries.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/runs/{id}</code></td>
+          <td>Authenticated</td>
+          <td>Path: <code>id</code></td>
+          <td>Detailed telemetry for a specific run, including sub-tasks, logs, and agent thought streams.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/approvals</code></td>
+          <td>Authenticated</td>
+          <td>Query: <code>status</code></td>
+          <td>Returns list of pending human-in-the-loop approval requests requiring governance review.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span> <code>/api/orchestration/approvals/{id}/decide</code></td>
+          <td><code>director</code> / <code>exec</code></td>
+          <td><code>{ decision: "APPROVED"|"REJECTED", reason }</code></td>
+          <td>Approves or rejects a PO exceeding $5k. Enforces 403 on analysts and self-approvers.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span> <code>/api/orchestration/receipts/confirm</code></td>
+          <td><code>operations_director</code></td>
+          <td><code>{ po_id, received_qty, condition }</code></td>
+          <td>Generates Goods Receipt Note (GRN), updates warehouse inventory, triggers Merkle seal.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/inventory</code></td>
+          <td>Authenticated</td>
+          <td>None</td>
+          <td>Returns live warehouse stock levels, reserved units, on-order quantities, and SKUs.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/merkle/blocks</code></td>
+          <td>Authenticated</td>
+          <td>Query: <code>limit</code></td>
+          <td>Lists all sealed cryptographic Merkle blocks with root hashes, event counts, and signatures.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/merkle/verify/{block}</code></td>
+          <td>Public</td>
+          <td>Path: <code>block_number</code></td>
+          <td>Returns full Merkle tree proof, leaves, sibling hashes, and Ed25519 verification result.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/orchestration/compliance/evaluations</code></td>
+          <td>Authenticated</td>
+          <td>None</td>
+          <td>Returns all statutory compliance audit reports (EAR99, CBAM, LkSG) with citations.</td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span> <code>/api/health</code></td>
+          <td>Public</td>
+          <td>None</td>
+          <td>Returns system uptime, active database status, agent readiness, and version 2.6.4.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- =========================================================
+         SECTION 10: ENTERPRISE SECURITY & RBAC
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-10"><span class="sec-num">10</span> Enterprise Security, RBAC & Governance</h2>
+
+    <p>
+      AETHERIS AEOS implements strict enterprise security modeled after defense-grade zero-trust principles. Every action is authenticated, authorized against an explicit permission matrix, and validated for separation of duties:
+    </p>
+
+    <h3>Role-Based Access Control (RBAC) Matrix</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Role Identifier</th>
+          <th>Title & Persona</th>
+          <th>View Radar & Runs</th>
+          <th>Trigger Recovery</th>
+          <th>Approve PO (&gt;$5k)</th>
+          <th>Confirm Goods (GRN)</th>
+          <th>Export Audit Ledger</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>executive</code></td>
+          <td>Chief Operating Officer</td>
+          <td>Full Access</td>
+          <td>Authorized</td>
+          <td><strong style="color: green;">Authorized</strong></td>
+          <td>Authorized</td>
+          <td><strong style="color: green;">Full Export</strong></td>
+        </tr>
+        <tr>
+          <td><code>operations_director</code></td>
+          <td>Director of Supply Chain</td>
+          <td>Full Access</td>
+          <td>Authorized</td>
+          <td><strong style="color: green;">Authorized</strong></td>
+          <td><strong style="color: green;">Authorized</strong></td>
+          <td>Authorized</td>
+        </tr>
+        <tr>
+          <td><code>compliance_officer</code></td>
+          <td>Chief Regulatory Counsel</td>
+          <td>Full Access</td>
+          <td>Read-Only</td>
+          <td><span style="color: red;">Denied (403)</span></td>
+          <td><span style="color: red;">Denied (403)</span></td>
+          <td><strong style="color: green;">Full Export</strong></td>
+        </tr>
+        <tr>
+          <td><code>analyst</code></td>
+          <td>Supply Chain Specialist</td>
+          <td>Full Access</td>
+          <td>Authorized</td>
+          <td><span style="color: red;">Denied (403)</span></td>
+          <td><span style="color: red;">Denied (403)</span></td>
+          <td>View Only</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Governance Safeguards & Dual Control</h3>
+    <ul>
+      <li><strong>Financial Threshold Floor:</strong> Any procurement action with a total financial liability exceeding $5,000 USD is automatically placed into an escrow hold (<code>PENDING_APPROVAL</code>).</li>
+      <li><strong>Separation of Duties (Four-Eyes Principle):</strong> The initiator of a procurement run is cryptographically prevented from approving their own request. Approval requires signature from a distinct authorized identity.</li>
+      <li><strong>Unauthorized Rejection Guarantee:</strong> Attempting to approve a PO as an <code>analyst</code> or <code>compliance_officer</code> returns an immediate HTTP <code>403 Forbidden</code> with the violation logged into the SHA-256 audit chain.</li>
+    </ul>
+
+    <!-- =========================================================
+         SECTION 11: STATUTORY COMPLIANCE FRAMEWORKS
+         ========================================================= -->
+    <h2 id="sec-11"><span class="sec-num">11</span> Statutory Compliance Frameworks</h2>
+
+    <p>
+      The Regulatory Sentinel agent audits every supplier and component against three critical global regulatory frameworks:
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>1. US Export Administration Regulations (EAR99)</h4>
+        <p>
+          Verifies that dual-use aerospace components do not violate Commerce Control List (CCL) licensing or end-user embargoes under 15 CFR § 734. Screened against OFAC Specially Designated Nationals (SDN) lists.
+        </p>
+        <span class="badge badge-blue">15 CFR § 734 // CCL Audited</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>2. EU Carbon Border Adjustment Mechanism (CBAM)</h4>
+        <p>
+          Calculates embedded Scope 1 and Scope 2 emissions under EU Regulation 2023/956 for metals and titanium. Bids calculate exact metric tons of embedded CO2 and associated CBAM certificate liabilities prior to PO issuance.
+        </p>
+        <span class="badge badge-green">EU Reg 2023/956 // CN 8108.90</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>3. German Supply Chain Act (LkSG)</h4>
+        <p>
+          Enforces mandatory human rights and environmental due diligence under Gesetz über die unternehmerischen Sorgfaltspflichten in Lieferketten. Verifies ISO 14001, ILO conventions, and audit trails for all Tier-1 and Tier-2 suppliers.
+        </p>
+        <span class="badge badge-purple">LkSG § 3 // ISO 14001</span>
+      </div>
+
+      <div class="feature-card">
+        <h4>4. Quality & Aerospace Standards</h4>
+        <p>
+          Audits ISO 9001 (Quality Management) and AS9100D (Aerospace Quality Assurance) certifications, checking issuing authorities and expiration dates stored in <code>compliance_documents</code>.
+        </p>
+        <span class="badge badge-amber">AS9100D // ISO 9001:2015</span>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         SECTION 12: BENCHMARK OPERATIONAL WALKTHROUGH
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-12"><span class="sec-num">12</span> Benchmark Operational Walkthrough</h2>
+
+    <p>
+      This operational walkthrough demonstrates the end-to-end execution of Order <code>ORD-2026-500</code> (Airbus Defense requirement for 500 Titanium Flanges), demonstrating how AEOS resolves an acute shortage in real-time:
+    </p>
+
+    <div class="callout success">
+      <div class="callout-title">The Benchmark Scenario: ORD-2026-500</div>
+      <strong>Customer:</strong> Airbus Defense &amp; Space • <strong>Product:</strong> TF-700 Grade 5 Titanium Flange (SKU: TITAN-FLANGE-700)<br>
+      <strong>Required Quantity:</strong> 500 Units • <strong>Current Stock On-Hand:</strong> 300 Units • <strong>Critical Deficit:</strong> 200 Units<br>
+      <strong>Contractual Late Penalty:</strong> $2,500/day • <strong>Delivery Deadline:</strong> 72 Hours
+    </div>
+
+    <h3>Step-by-Step Execution Trace</h3>
+    <ol>
+      <li>
+        <strong>Deficit Detection (Apex Orchestrator):</strong>
+        Apex intercepts order <code>ORD-2026-500</code>. Inventory ledger reveals only 300 units available in Central Warehouse Frankfurt. Computes immediate deficit: <code>500 - 300 = 200 units</code>. Status marked as <code>SHORTAGE_DETECTED</code>.
+      </li>
+      <li>
+        <strong>Market Arbitrage & Supplier Bidding (Operations Conductor):</strong>
+        Evaluates qualified suppliers from <code>suppliers</code> table:
+        <ul>
+          <li><em>Bavaria Precision Metallics (Germany):</em> 200 units @ $54.00/unit = $10,800. Lead time: 2 days. Rating: 4.9/5.0.</li>
+          <li><em>Nordic Alloy Foundry (Sweden):</em> 200 units @ $62.00/unit = $12,400. Lead time: 5 days. Rating: 4.7/5.0.</li>
+          <li><em>Shenzhen Aerometals (China):</em> 200 units @ $38.00/unit = $7,600. Lead time: 14 days (Violates SLA). CBAM tariff: High.</li>
+        </ul>
+        Operations Conductor selects <strong>Bavaria Precision Metallics</strong>.
+      </li>
+      <li>
+        <strong>Regulatory Verification (Regulatory Sentinel):</strong>
+        Sentinel checks Bavaria Precision Metallics: EAR99 export classification passed (domestic EU transfer); CBAM embedded emissions computed at 1.42t CO2; German LkSG human rights audit passed (ISO 14001:2015 valid through 2027). Compliance evaluation marked <code>PASSED</code>.
+      </li>
+      <li>
+        <strong>Financial Gating Triggered (Human-in-the-Loop):</strong>
+        Total PO value is $10,800 USD, which exceeds the autonomous $5,000 threshold. The system creates record <code>approval_requests</code> with status <code>PENDING_APPROVAL</code>.
+      </li>
+      <li>
+        <strong>RBAC Authorization & Dual Approval:</strong>
+        Marcus Vance (<code>operations_director</code>) reviews the audit bundle and signs the approval. An attempt by an analyst to approve triggers an HTTP 403 rejection.
+      </li>
+      <li>
+        <strong>Purchase Order Issuance & Goods Receipt (GRN):</strong>
+        PO <code>PO-2026-8841</code> is issued. Upon supplier delivery, Marcus Vance executes <code>/api/orchestration/receipts/confirm</code>. Inventory increases by 200 units (300 + 200 = 500). Customer order is fully allocated and dispatched.
+      </li>
+      <li>
+        <strong>Cryptographic Block Sealing (Cryptographic Auditor):</strong>
+        All 7 state transitions are converted to canonical JSON, chained via SHA-256, compiled into a binary Merkle tree, and signed with Ed25519 into Block <code>#104</code>.
+      </li>
+    </ol>
+
+    <!-- =========================================================
+         SECTION 13: MATHEMATICAL FORMULATIONS & RESILIENCE
+         ========================================================= -->
+    <h2 id="sec-13"><span class="sec-num">13</span> Mathematical Formulations & Resilience</h2>
+
+    <h3>1. Arbitrage Net Utility Formula</h3>
+    <p>
+      The Market Alpha Strategist evaluates supplier selection using the following net savings utility function:
+    </p>
+    <pre><code>Net Utility U(s) = [ (T_sla - T_lead(s)) * Penalty_daily ] - [ Q * P_unit(s) + C_freight(s) + C_cbam(s) ]
+
+Where:
+  T_sla          = Contractual deadline in days
+  T_lead(s)      = Supplier lead time in days
+  Penalty_daily  = Contractual SLA late penalty per day ($2,500)
+  Q              = Required deficit units (200)
+  P_unit(s)      = Unit purchase cost ($54.00)
+  C_freight(s)   = Expedited logistics cost
+  C_cbam(s)      = Embedded carbon border adjustment tariff</code></pre>
+
+    <h3>2. Byzantine Fault Tolerance Quorum Formula</h3>
+    <p>
+      For the swarm to achieve deterministic consensus without vulnerability to rogue or hallucinating LLM agents:
+    </p>
+    <pre><code>Consensus Threshold = Sum(Weight_i * Vote_i) / Sum(Weight_i) >= 0.67 (67% Supermajority)</code></pre>
+
+    <h3>3. Attack Resilience & Tamper-Detection Benchmarks</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Adversarial Attack Scenario</th>
+          <th>Simulated Vector</th>
+          <th>Detection Mechanism</th>
+          <th>System Response</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Direct SQL Record Tampering</strong></td>
+          <td>Database administrator alters unit price in <code>purchase_orders</code> from $54 to $40.</td>
+          <td>SHA-256 canonical hash chain re-computation.</td>
+          <td>Hash mismatch detected at node #4. Entire block marked invalid; security alert raised.</td>
+        </tr>
+        <tr>
+          <td><strong>Unauthorized Approval Escalation</strong></td>
+          <td>User with <code>analyst</code> token sends POST to <code>/api/orchestration/approvals/{id}/decide</code>.</td>
+          <td>FastAPI dependency role enforcement gate.</td>
+          <td>Immediate HTTP 403 Forbidden. Failed attempt written to audit trail.</td>
+        </tr>
+        <tr>
+          <td><strong>Merkle Tree Invalidation</strong></td>
+          <td>Attacker attempts to forge inclusion proof with fake sibling hash.</td>
+          <td>Binary Merkle root verification path traversal.</td>
+          <td>Calculated root does not match signed Ed25519 block root. Proof rejected.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- =========================================================
+         SECTION 14: DEVELOPER HANDBOOK & DEPLOYMENT
+         ========================================================= -->
+    <div class="page-break"></div>
+    <h2 id="sec-14"><span class="sec-num">14</span> Developer Handbook & Deployment</h2>
+
+    <h3>1. System Prerequisites</h3>
+    <ul>
+      <li>Node.js 18.x or 20.x LTS + npm 9+</li>
+      <li>Python 3.11+ with <code>pip</code> and <code>venv</code></li>
+      <li>Microsoft Windows 10/11, macOS Sonoma/Sequoia, or Ubuntu Linux 22.04 LTS</li>
+    </ul>
+
+    <h3>2. Environment Configuration (<code>.env</code>)</h3>
+    <pre><code># Backend Environment (.env or server_py environment)
+PORT=3001
+ENVIRONMENT=production
+DATABASE_URL=sqlite:///./aetheris.db
+SECRET_KEY=aetheris-enterprise-secret-key-2026-aeos
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+
+# Frontend Environment (.env.local)
+VITE_API_BASE_URL=http://localhost:3001
+VITE_ENABLE_MOCK_FALLBACK=false</code></pre>
+
+    <h3>3. Step-by-Step Local Launch Sequence</h3>
+    <p>Open two separate terminal consoles to start the authoritative stack:</p>
+
+    <p><strong>Terminal 1: Start FastAPI Authoritative Backend (:3001)</strong></p>
+    <pre><code>cd "d:\DEVLOPEMENT\2nd project\2nd project"
+python -m uvicorn server_py.main:app --host 0.0.0.0 --port 3001 --reload</code></pre>
+
+    <p><strong>Terminal 2: Start Vite React Frontend (:5173)</strong></p>
+    <pre><code>cd "d:\DEVLOPEMENT\2nd project\2nd project"
+npm run dev</code></pre>
+
+    <h3>4. Pre-Configured Enterprise Seed Accounts</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Role Title</th>
+          <th>User Email</th>
+          <th>Default Password</th>
+          <th>Authority & Capabilities</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Executive (COO)</strong></td>
+          <td><code>elena@aetheris.ai</code></td>
+          <td><code>Executive2026!</code></td>
+          <td>Full executive oversight, unlimited financial approvals, audit export.</td>
+        </tr>
+        <tr>
+          <td><strong>Operations Director</strong></td>
+          <td><code>marcus@aetheris.ai</code></td>
+          <td><code>Operations2026!</code></td>
+          <td>Procurement lead, PO approval up to ceiling, Goods Receipt (GRN).</td>
+        </tr>
+        <tr>
+          <td><strong>Compliance Officer</strong></td>
+          <td><code>sophia@aetheris.ai</code></td>
+          <td><code>Compliance2026!</code></td>
+          <td>Regulatory oversight, EAR99/CBAM/LkSG audit trail reviewer.</td>
+        </tr>
+        <tr>
+          <td><strong>Supply Chain Analyst</strong></td>
+          <td><code>jordan@aetheris.ai</code></td>
+          <td><code>Analyst2026!</code></td>
+          <td>Operational analyst, shortage initiator, read-only governance.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>5. Keyboard Shortcuts & Productivity Features</h3>
+    <ul>
+      <li><kbd>Ctrl+K</kbd> / <kbd>⌘K</kbd>: Toggle Global Command Palette (omnibox search, quick view jumping).</li>
+      <li><kbd>Esc</kbd>: Dismiss active modal (Audit Proof, Master Prompt, API Key, Command Palette).</li>
+      <li>Theme Toggle in TopBar: Instantly switches between Linear Dark Obsidian and Apple Light Studio.</li>
+    </ul>
+
+    <!-- =========================================================
+         DOCUMENT FOOTER
+         ========================================================= -->
+    <div class="doc-footer">
+      <div>
+        <strong>AETHERIS AEOS Technical Manual</strong> • Document Ref: <code>AEOS-2.6.4-SPEC-2026</code>
+      </div>
+      <div>
+        Confidential &amp; Proprietary • © 2026 AETHERIS Systems Core Group. All rights reserved.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
