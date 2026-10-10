@@ -23,11 +23,13 @@ import type { UserRole } from '../types/auth';
 interface LoginPageProps {
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
+  onNavigateToRegister?: () => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   theme = 'light',
-  onToggleTheme
+  onToggleTheme,
+  onNavigateToRegister
 }) => {
   const { login, register, loginWithSSO } = useAuth();
 
@@ -540,16 +542,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </form>
           )}
 
-          {/* Quick Direct Launch Option */}
-          <div className="login-quick-launch-footer">
-            <span>Need immediate access for evaluation?</span>
-            <button
-              type="button"
-              className="quick-launch-link"
-              onClick={() => handleQuickPersonaLogin('executive@aetheris.ai', 'Elena Rostova')}
-            >
-              ⚡ Launch Instant Executive Session
-            </button>
+          {/* Quick Direct Launch & Register Navigation */}
+          <div className="login-quick-launch-footer flex flex-col gap-1.5 items-center">
+            {onNavigateToRegister && (
+              <div className="text-xs text-gray-400 mb-1">
+                <span>New enterprise organization? </span>
+                <button
+                  type="button"
+                  className="quick-launch-link font-semibold text-blue-500 hover:underline"
+                  onClick={onNavigateToRegister}
+                >
+                  Create Workstation / Register
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span>Need immediate access for evaluation?</span>
+              <button
+                type="button"
+                className="quick-launch-link"
+                onClick={() => handleQuickPersonaLogin('executive@aetheris.ai', 'Elena Rostova')}
+              >
+                ⚡ Launch Instant Executive Session
+              </button>
+            </div>
           </div>
         </div>
       </div>

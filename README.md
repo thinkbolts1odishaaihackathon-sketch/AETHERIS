@@ -65,6 +65,7 @@ In the Render Web Service dashboard, go to the **Environment** tab and add:
 | `PORT` | `10000` | (Render sets this automatically, but safe to set) |
 | `CORS_ORIGINS` | `https://your-frontend-app.vercel.app` | Your Vercel frontend URL (or `*` to allow any origin) |
 | `JWT_SECRET` | `generate-a-secure-random-string-here` | Secret key for JWT signing |
+| `DATABASE_URL` | `postgresql://user:password@host/dbname` | **PostgreSQL Connection String** (Render injects this if you attach a Render PostgreSQL database. If omitted, uses local SQLite.) |
 
 ### Step 4: Deploy & Copy URL
 - Click **Deploy Web Service**.
@@ -84,12 +85,13 @@ In the Render Web Service dashboard, go to the **Environment** tab and add:
 - **Build Command:** `npm run build` (default)
 - **Output Directory:** `dist` (default)
 
-### Step 3: Add Backend API Environment Variable
+### Step 3: Add Frontend Environment Variables
 Under **Environment Variables**, add:
 
 | Variable Name | Value | Description |
 | :--- | :--- | :--- |
 | `VITE_API_URL` | `https://aetheris-backend.onrender.com` | **Your Render Backend URL** (without `/api` or with `/api`, both are supported automatically) |
+| `VITE_GEMINI_API_KEY` | `AIzaSy...` | **Google Gemini API Key** (from [Google AI Studio](https://aistudio.google.com/app/apikey) for real-time multi-agent intelligence) |
 
 > 💡 **How `VITE_API_URL` works:**  
 > The API client in `frontend/src/services/api.ts` automatically reads `import.meta.env.VITE_API_URL`.  

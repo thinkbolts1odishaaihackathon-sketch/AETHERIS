@@ -3,6 +3,7 @@ import { Cpu } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { LoginPage } from './components/LoginPage';
+import { RegisterPage } from './components/RegisterPage';
 import { ProblemStatementExplorer } from './components/ProblemStatementExplorer';
 import { ExecutiveDashboard } from './components/ExecutiveDashboard';
 import { SwarmVisualizer } from './components/SwarmVisualizer';
@@ -25,6 +26,7 @@ import type { Agent, GeminiConfig } from './types';
 export function App() {
   const { user, isAuthenticated, isLoading } = useAuth();
 
+  const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login');
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [agents, setAgents] = useState<Agent[]>(INITIAL_AGENTS);
   const [activeAgentId, setActiveAgentId] = useState<string | undefined>(undefined);
@@ -97,12 +99,23 @@ export function App() {
     );
   }
 
-  // Proper Authentication Gate: Require Login if not authenticated
+  // Proper Authentication Gate: Require Login or Register if not authenticated
   if (!isAuthenticated || !user) {
+    if (authScreen === 'register') {
+      return (
+        <RegisterPage
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+          onNavigateToLogin={() => setAuthScreen('login')}
+        />
+      );
+    }
+
     return (
       <LoginPage
         theme={theme}
         onToggleTheme={handleToggleTheme}
+        onNavigateToRegister={() => setAuthScreen('register')}
       />
     );
   }

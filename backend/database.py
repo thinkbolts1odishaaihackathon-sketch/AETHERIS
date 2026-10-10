@@ -23,15 +23,25 @@ except (ImportError, ValueError):
 
 Base = declarative_base()
 
-# Configure Database URL: Defaults to SQLite in server_py/aetheris.db or env DATABASE_URL
+# Configure Database URL: Defaults to SQLite in backend/aetheris.db or env DATABASE_URL
 DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "aetheris.db"))
-DATABASE_URL = os.environ.get("DATABASE_URL", f"sqlite:///{DB_PATH}")
+raw_db_url = os.environ.get("DATABASE_URL", f"sqlite:///{DB_PATH}").strip()
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
-    pool_pre_ping=True
-)
+# Render & cloud providers supply 'postgres://' which SQLAlchemy 2.0 requires as 'postgresql://'
+if raw_db_url.startswith("postgres://"):
+    DATABASE_URL = raw_db_url.replace("postgres://", "postgresql://", 1)
+else:
+    DATABASE_URL = raw_db_url
+
+# Connection arguments: SQLite requires check_same_thread=False; PostgreSQL uses connection pooling
+engine_kwargs: Dict[str, Any] = {"pool_pre_ping": True}
+if DATABASE_URL.startswith("sqlite"):
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+else:
+    engine_kwargs["pool_size"] = 10
+    engine_kwargs["max_overflow"] = 20
+
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

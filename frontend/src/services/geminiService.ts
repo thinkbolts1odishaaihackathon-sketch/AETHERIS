@@ -3,19 +3,31 @@ import type { SwarmMessage, GeminiConfig, AgentRole } from '../types';
 const STORAGE_KEY = 'aetheris_gemini_config';
 
 export const getStoredGeminiConfig = (): GeminiConfig => {
+  const envApiKey = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined)?.trim() || '';
+  const rawModel = (import.meta.env.VITE_GEMINI_MODEL as string | undefined)?.trim();
+  const validModels: Array<GeminiConfig['model']> = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+  const envModel: GeminiConfig['model'] = validModels.includes(rawModel as any)
+    ? (rawModel as GeminiConfig['model'])
+    : 'gemini-1.5-flash';
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      // If user has a valid key saved in localStorage, respect it
+      if (parsed.apiKey && parsed.apiKey.trim().length > 0) {
+        return parsed;
+      }
     }
   } catch (e) {
     console.error('Error reading gemini config from storage', e);
   }
+
   return {
-    apiKey: '',
-    model: 'gemini-1.5-flash',
+    apiKey: envApiKey,
+    model: envModel,
     temperature: 0.4,
-    isLive: false
+    isLive: Boolean(envApiKey && envApiKey.length > 0)
   };
 };
 
