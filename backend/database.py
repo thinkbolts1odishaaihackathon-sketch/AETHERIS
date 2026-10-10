@@ -27,9 +27,19 @@ Base = declarative_base()
 DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "aetheris.db"))
 raw_db_url = os.environ.get("DATABASE_URL", f"sqlite:///{DB_PATH}").strip()
 
-# Render & cloud providers supply 'postgres://' which SQLAlchemy 2.0 requires as 'postgresql://'
+# Render & cloud providers supply 'postgres://' which SQLAlchemy requires as 'postgresql://'
 if raw_db_url.startswith("postgres://"):
-    DATABASE_URL = raw_db_url.replace("postgres://", "postgresql://", 1)
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+
+# Ensure dialect driver compatibility:
+# In SQLAlchemy 2.1+, 'postgresql://' defaults to 'psycopg' (psycopg 3).
+# If only psycopg2 is available, explicitly use 'postgresql+psycopg2://'.
+if raw_db_url.startswith("postgresql://") and not raw_db_url.startswith("postgresql+"):
+    try:
+        import psycopg
+        DATABASE_URL = raw_db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    except ImportError:
+        DATABASE_URL = raw_db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 else:
     DATABASE_URL = raw_db_url
 
